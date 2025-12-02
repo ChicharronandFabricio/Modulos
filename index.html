@@ -12,53 +12,52 @@
         background: #d60000;
     }
 
-    /* Parte superior con imagen */
+    /* Parte superior */
     .header {
         background: url("https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=60") center/cover;
-        padding: 80px 40px;
+        padding: 70px 40px;
         color: white;
-        font-size: 60px;
+        font-size: 50px;
         font-weight: 800;
-        letter-spacing: 3px;
         text-shadow: 0px 0px 10px rgba(0,0,0,0.6);
     }
 
-    /* Contenedor rojo */
+    /* Contenedor de módulos */
     .container {
-        background: #e50000;
         padding: 40px 20px;
+        max-width: 900px;
+        margin: auto;
         display: flex;
         flex-direction: column;
-        align-items: center;
         gap: 20px;
     }
 
-    /* Grids de botones */
-    .row {
+    /* Tarjeta horizontal */
+    .card {
         display: flex;
-        gap: 25px;
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-
-    /* Estética de los botones */
-    .btn {
+        justify-content: space-between;
+        align-items: center;
         background: #333;
         color: white;
+        padding: 20px 25px;
+        border-radius: 12px;
         text-decoration: none;
-        padding: 18px 28px;
-        font-size: 22px;
-        border-radius: 15px;
+        font-size: 24px;
         font-weight: bold;
-        display: inline-block;
-        min-width: 260px;
-        text-align: center;
         transition: 0.2s;
     }
 
-    .btn:hover {
+    .card:hover {
         background: #444;
-        transform: translateY(-3px);
+        transform: scale(1.02);
+    }
+
+    /* Imagen de la derecha */
+    .card img {
+        width: 70px;
+        height: 70px;
+        object-fit: contain;
+        margin-left: 20px;
     }
 </style>
 
@@ -71,24 +70,40 @@
 
 <div class="container">
 
-    <!-- Fila 1 -->
-    <div class="row">
-        <a class="btn" href="ATENCION_CLIENTE.html">Atención al cliente</a>
-        <a class="btn" href="ATENCION_MEDICA.html">Servicios médicos</a>
-    </div>
+    <a class="card" href="ATENCION_CLIENTE.html">
+        Atención al cliente
+        <img src="https://img.icons8.com/ios-filled/100/customer-support.png">
+    </a>
 
-    <!-- Fila 2 -->
-    <div class="row">
-        <a class="btn" href="MEDIOS.html">Atención a medios de comunicación</a>
-        <a class="btn" href="BANCO.html">Banco</a>
-        <a class="btn" href="COMPETENCIA.html">Competencia</a>
-    </div>
+    <a class="card" href="ATENCION_MEDICA.html">
+        Servicios médicos
+        <img src="https://img.icons8.com/ios-filled/100/hospital.png">
+    </a>
 
-    <!-- Fila 3 -->
-    <div class="row">
-        <a class="btn" href="INVERSIONISTAS.html">Consulta de inversiones</a>
-        <a class="btn" href="GOBIERNO.html">Gobierno</a>
-    </div>
+    <a class="card" href="MEDIOS.html">
+        Atención a medios de comunicación
+        <img src="https://img.icons8.com/ios-filled/100/microphone.png">
+    </a>
+
+    <a class="card" href="BANCO.html">
+        Banco
+        <img src="https://img.icons8.com/ios-filled/100/bank.png">
+    </a>
+
+    <a class="card" href="COMPETENCIA.html">
+        Competencia
+        <img src="https://img.icons8.com/ios-filled/100/trophy.png">
+    </a>
+
+    <a class="card" href="INVERSIONISTAS.html">
+        Consulta de inversiones
+        <img src="https://img.icons8.com/ios-filled/100/investment.png">
+    </a>
+
+    <a class="card" href="GOBIERNO.html">
+        Gobierno
+        <img src="https://img.icons8.com/ios-filled/100/government.png">
+    </a>
 
 </div>
 
