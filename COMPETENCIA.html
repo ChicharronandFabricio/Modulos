@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stakeholder — Competencia | Sistema Rimac</title>
+
+<style>
+:root{
+  --accent:#d32f2f;
+  --accent-dark:#b71c1c;
+  --bg:#f4f5f7;
+  --card:#ffffff;
+  --border:#dddddd;
+  --text:#222;
+  --muted:#777;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:"Segoe UI",sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+
+/* Header */
+header{
+  background:linear-gradient(90deg,var(--accent),var(--accent-dark));
+  color:#fff;
+  padding:20px;
+  box-shadow:0 3px 10px rgba(0,0,0,.25);
+}
+header h1{font-size:1.6rem;font-weight:700;margin-bottom:4px;}
+header small{opacity:.9;font-size:.9rem;}
+
+/* Main */
+main{
+  max-width:1150px;
+  margin:28px auto;
+  padding:0 18px;
+}
+
+/* Generic cards */
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:18px 20px;
+  box-shadow:0 5px 18px rgba(0,0,0,.07);
+  margin-bottom:18px;
+}
+
+h2{margin-bottom:8px;color:var(--accent-dark);}
+.small{font-size:.86rem;color:var(--muted);}
+
+/* Action cards */
+.actions-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px;
+  margin-bottom:20px;
+}
+@media(max-width:1000px){
+  .actions-grid{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:700px){
+  .actions-grid{grid-template-columns:1fr;}
+}
+
+.action-card{
+  border-radius:16px;
+  padding:14px 16px;
+  border:1px solid var(--border);
+  cursor:pointer;
+  transition:.18s;
+}
+.action-card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 10px 26px rgba(0,0,0,.1);
+  border-color:var(--accent);
+}
+.action-icon{
+  width:36px;height:36px;
+  border-radius:12px;
+  background:rgba(211,47,47,.12);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:6px;
+  font-size:1.2rem;
+}
+.action-title{font-weight:700;color:var(--accent-dark);}
+.action-desc{font-size:.86rem;color:var(--muted);margin-top:4px;}
+
+/* Two-column layout */
+.grid-2{
+  display:grid;
+  grid-template-columns:2fr 1.5fr;
+  gap:16px;
+}
+@media(max-width:900px){
+  .grid-2{grid-template-columns:1fr;}
+}
+
+/* Indicators */
+.ind-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
+.ind-card{
+  background:#fafafa;border-radius:12px;
+  border:1px solid var(--border);
+  padding:12px;
+}
+.ind-label{font-size:.8rem;color:var(--muted);}
+.ind-value{font-size:1.05rem;font-weight:700;margin-top:3px;}
+
+/* Registro */
+.log-list{
+  max-height:260px;
+  overflow:auto;
+  margin-top:10px;
+}
+.log-item{
+  background:#fafafa;
+  border-radius:10px;
+  padding:10px;
+  border:1px solid #eee;
+  font-size:.88rem;
+  margin-bottom:8px;
+}
+
+/* Modal */
+#modal{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.45);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:999;
+}
+.modal-card{
+  background:#fff;
+  width:92%;max-width:720px;
+  padding:18px 20px;
+  border-radius:14px;
+  box-shadow:0 20px 45px rgba(0,0,0,.25);
+}
+.modal-header{margin-bottom:10px;}
+.modal-actions{
+  margin-top:16px;
+  display:flex;
+  justify-content:flex-end;
+  gap:8px;
+}
+
+input,select,textarea{
+  width:100%;padding:10px;
+  border-radius:8px;border:1px solid #ccc;
+  margin-top:5px;font-size:.9rem;
+}
+textarea{resize:vertical;}
+
+.btn{
+  padding:10px 14px;border-radius:8px;
+  cursor:pointer;border:none;font-weight:600;
+}
+.btn-primary{background:var(--accent);color:#fff;}
+.btn-primary:hover{background:var(--accent-dark);}
+.btn-ghost{
+  background:#fff;border:1px solid var(--border);
+  color:var(--accent-dark);
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Stakeholder — Competencia</h1>
+  <small>Monitoreo competitivo del mercado asegurador peruano</small>
+</header>
+
+<main>
+
+<!-- ACTIONS -->
+<section class="actions-grid">
+
+  <article class="action-card" onclick="openModal('analisis')">
+    <div class="action-icon">📊</div>
+    <div class="action-title">Registrar análisis competitivo</div>
+    <div class="action-desc">Comparación contra Pacífico, Mapfre, La Positiva o Chubb.</div>
+  </article>
+
+  <article class="action-card" onclick="openModal('movimiento')">
+    <div class="action-icon">📢</div>
+    <div class="action-title">Registrar movimiento de competencia</div>
+    <div class="action-desc">Nuevos productos, cambios de precios, campañas o alianzas.</div>
+  </article>
+
+  <article class="action-card" onclick="openModal('comparar')">
+    <div class="action-icon">⚖️</div>
+    <div class="action-title">Generar reporte comparativo</div>
+    <div class="action-desc">Comparación de coberturas, primas o tiempos de atención.</div>
+  </article>
+
+  <article class="action-card" onclick="openModal('alerta')">
+    <div class="action-icon">🚨</div>
+    <div class="action-title">Emitir alerta de mercado</div>
+    <div class="action-desc">Aviso crítico por impacto directo en Rimac.</div>
+  </article>
+
+</section>
+
+<!-- MAIN CONTENT -->
+<section class="grid-2">
+
+  <!-- Estado & Registro -->
+  <div>
+
+    <div class="card">
+      <h2>Estado del mercado</h2>
+      <p class="small">Condiciones actuales según movimientos de la competencia.</p>
+      <span id="estado" style="background:#ffecec;border:1px solid #ffcdd2;padding:6px 12px;border-radius:999px;font-weight:600;color:var(--accent-dark);font-size:.85rem;">Estable</span>
+
+      <h3 style="margin-top:16px;margin-bottom:4px;font-size:1rem;color:var(--accent-dark);">Indicadores</h3>
+
+      <div class="ind-grid">
+        <div class="ind-card">
+          <div class="ind-label">Movimientos detectados</div>
+          <div class="ind-value" id="movs">0</div>
+        </div>
+        <div class="ind-card">
+          <div class="ind-label">Alertas emitidas</div>
+          <div class="ind-value" id="alts">0</div>
+        </div>
+        <div class="ind-card">
+          <div class="ind-label">Reportes generados</div>
+          <div class="ind-value" id="reps">0</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Registro de actividades</h2>
+      <input id="filtro" placeholder="Filtrar..." oninput="render()">
+      <div class="log-list" id="log"></div>
+    </div>
+
+  </div>
+
+  <!-- Resumen -->
+  <div class="card">
+    <h2>Resumen competitivo</h2>
+    <p class="small">Últimos hitos analizados en el mercado asegurador.</p>
+
+    <div style="margin-top:14px;">
+      <p class="small">Último movimiento registrado</p>
+      <div style="background:#fafafa;border:1px solid var(--border);border-radius:12px;padding:12px;margin-top:4px;">
+        Aseguradora: <b id="ultComp">—</b><br>
+        Evento: <b id="ultEv">—</b><br>
+        Fecha: <b id="ultFecha">—</b>
+      </div>
+
+      <p class="small" style="margin-top:14px;">Último reporte comparativo</p>
+      <div style="background:#fafafa;border:1px solid var(--border);border-radius:12px;padding:12px;margin-top:4px;">
+        Comparación: <b id="ultRep">—</b><br>
+        Resultado: <b id="ultRes">—</b>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+</main>
+
+<!-- MODAL -->
+<div id="modal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h2 id="mTitle"></h2>
+      <p class="small" id="mSub"></p>
+    </div>
+
+    <div id="mBody"></div>
+
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" id="mAction">Procesar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* LOGIC */
+const logs=[];
+let movs=0, alts=0, reps=0;
+
+function addLog(txt){
+  logs.unshift(`${new Date().toLocaleString()} — ${txt}`);
+  render();
+}
+
+function render(){
+  const f=document.querySelector("#filtro").value.toLowerCase();
+  const l=document.querySelector("#log");
+  l.innerHTML="";
+  logs.filter(x=>x.toLowerCase().includes(f)).forEach(x=>{
+    const d=document.createElement("div");
+    d.className="log-item";
+    d.textContent=x;
+    l.appendChild(d);
+  });
+  document.querySelector("#movs").textContent=movs;
+  document.querySelector("#alts").textContent=alts;
+  document.querySelector("#reps").textContent=reps;
+}
+
+/* MODAL */
+function openModal(type){
+  const modal=document.querySelector("#modal");
+  const t=document.querySelector("#mTitle");
+  const s=document.querySelector("#mSub");
+  const b=document.querySelector("#mBody");
+  const a=document.querySelector("#mAction");
+
+  if(type==="analisis"){
+    t.textContent="Registrar análisis competitivo";
+    s.textContent="Evaluación comparativa contra aseguradoras del mercado.";
+    b.innerHTML=`
+      <label>Aseguradora</label>
+      <select id="comp">
+        <option>Pacífico Seguros</option>
+        <option>Mapfre</option>
+        <option>La Positiva</option>
+        <option>Chubb Seguros</option>
+      </select>
+
+      <label>Ámbito analizado</label>
+      <select id="amb">
+        <option>Primas y precios</option>
+        <option>Red médica</option>
+        <option>Seguros vehiculares</option>
+        <option>Seguros de salud</option>
+        <option>Atención al cliente</option>
+        <option>Innovación / nuevos productos</option>
+      </select>
+
+      <label>Conclusión del análisis</label>
+      <textarea id="conc" rows="3"></textarea>
+    `;
+    a.onclick=procesarAnalisis;
+  }
+
+  if(type==="movimiento"){
+    t.textContent="Registrar movimiento de competencia";
+    s.textContent="Nuevo evento estratégico observado en la industria aseguradora.";
+    b.innerHTML=`
+      <label>Aseguradora</label>
+      <select id="comp2">
+        <option>Pacífico Seguros</option>
+        <option>Mapfre</option>
+        <option>La Positiva</option>
+        <option>Chubb Seguros</option>
+      </select>
+
+      <label>Movimiento detectado</label>
+      <textarea id="mov" rows="3" placeholder="Ej: Bajó precios en autos, lanzó seguro digital..."></textarea>
+    `;
+    a.onclick=procesarMovimiento;
+  }
+
+  if(type==="comparar"){
+    t.textContent="Generar reporte comparativo";
+    s.textContent="Reporte de diferencias entre Rimac y otra aseguradora.";
+    b.innerHTML=`
+      <label>Comparar con:</label>
+      <select id="comp3">
+        <option>Pacífico Seguros</option>
+        <option>Mapfre</option>
+        <option>La Positiva</option>
+        <option>Chubb Seguros</option>
+      </select>
+
+      <label>Tipo de comparación</label>
+      <select id="tipoC">
+        <option>Primas</option>
+        <option>Coberturas</option>
+        <option>Tiempos de atención</option>
+        <option>Red de clínicas</option>
+        <option>Productos de salud</option>
+      </select>
+    `;
+    a.onclick=procesarComparar;
+  }
+
+  if(type==="alerta"){
+    t.textContent="Emitir alerta de mercado";
+    s.textContent="Aviso importante por impacto crítico en Rimac.";
+    b.innerHTML=`
+      <label>Motivo de la alerta</label>
+      <textarea id="alt" rows="3"></textarea>
+    `;
+    a.onclick=procesarAlerta;
+  }
+
+  modal.style.display="flex";
+}
+
+function closeModal(){document.querySelector("#modal").style.display="none";}
+
+/* Processing functions */
+function procesarAnalisis(){
+  const c=document.querySelector("#comp").value;
+  const amb=document.querySelector("#amb").value;
+  addLog(`Análisis competitivo registrado · ${c} — Área: ${amb}`);
+  closeModal();
+}
+
+function procesarMovimiento(){
+  const c=document.querySelector("#comp2").value;
+  const m=document.querySelector("#mov").value;
+  movs++;
+  addLog(`Movimiento detectado · ${c}: ${m}`);
+  document.querySelector("#ultComp").textContent=c;
+  document.querySelector("#ultEv").textContent=m;
+  document.querySelector("#ultFecha").textContent=new Date().toLocaleDateString();
+  closeModal();
+}
+
+function procesarComparar(){
+  const c=document.querySelector("#comp3").value;
+  const t=document.querySelector("#tipoC").value;
+  reps++;
+  addLog(`Reporte comparativo generado · Rimac vs ${c} — ${t}`);
+  document.querySelector("#ultRep").textContent=`Rimac vs ${c}`;
+  document.querySelector("#ultRes").textContent=t;
+  closeModal();
+}
+
+function procesarAlerta(){
+  const txt=document.querySelector("#alt").value;
+  alts++;
+  addLog(`ALERTA DE MERCADO · ${txt}`);
+  document.querySelector("#estado").textContent="Inestable";
+  closeModal();
+}
+
+/* Inicial */
+addLog("Portal de competencia listo");
+render();
+</script>
+
+</body>
+</html>

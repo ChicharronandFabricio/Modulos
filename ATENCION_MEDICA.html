@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Solicitud de Atención Médica | Seguros Rimac</title>
+<!-- Página única (HTML+CSS+JS) lista para Visual Studio. Simula el flujo para que un paciente solicite atención médica:
+  Inicio → Datos del paciente → Tipo de atención → Centro y preferencia → Confirmación → Cita asignada.
+  Genera código MED-##### y permite descargar constancia (TXT) y evento de calendario (ICS). -->
+<style>
+  :root{
+    --accent:#d32f2f;      /* Rojo Rimac */
+    --accent-700:#b71c1c;
+    --ink:#222;
+    --muted:#666;
+    --bg:#f5f7fa;
+    --card:#fff;
+    --line:#e6e9ee;
+    --ok:#0f9d58;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+  button{font:inherit;cursor:pointer}
+
+  header.app{background:linear-gradient(90deg,var(--accent),var(--accent-700));color:#fff;padding:16px 14px;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+  .container{max-width:980px;margin:0 auto;padding:0 14px}
+  .brand{display:flex;align-items:center;gap:12px;font-weight:800}
+  .mark{width:40px;height:40px;border-radius:10px;background:#fff;color:var(--accent);display:grid;place-items:center}
+  .brand .title{display:flex;flex-direction:column}
+  .brand .title .kicker{opacity:.9;font-weight:700;font-size:12px;letter-spacing:.08em}
+  .brand .title h1{margin:0;font-size:18px}
+
+  main{margin:28px 0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.06);padding:18px}
+
+  .progress{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+  .step{flex:1;height:6px;border-radius:999px;background:#eceff3;overflow:hidden}
+  .step>span{display:block;height:100%;width:0;background:var(--accent);transition:width .28s}
+  .progress-labels{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;margin:6px 2px 0}
+
+  .screen{display:none;animation:fade .24s ease}
+  .screen.visible{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:none}}
+
+  h2.section{margin:0 0 6px;color:var(--accent);display:flex;align-items:center;gap:8px}
+  p.lead{margin:4px 0 14px;color:var(--muted)}
+
+  .grid{display:grid;gap:12px}
+  .grid.cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+  @media (max-width:780px){.grid.cols-2{grid-template-columns:1fr}}
+  label{font-weight:600;font-size:.95rem}
+  input,select,textarea{width:100%;padding:10px 12px;border:1px solid #ccc;border-radius:10px;background:#fff}
+  input[type=date],input[type=time]{padding:8px 10px}
+  textarea{resize:vertical}
+  small.hint{color:var(--muted)}
+
+  .actions{margin-top:14px;display:flex;gap:10px;flex-wrap:wrap}
+  .btn{border:1px solid var(--accent);background:var(--accent);color:#fff;padding:10px 14px;border-radius:10px;font-weight:700}
+  .btn:hover{background:var(--accent-700);border-color:var(--accent-700)}
+  .btn.secondary{background:#fff;color:var(--accent)}
+  .btn.ghost{background:#fff;border-color:#ddd;color:#333}
+
+  .summary{display:grid;gap:12px}
+  .item{border:1px dashed var(--line);border-radius:10px;padding:10px;background:#fafbfc}
+  .code{display:inline-flex;align-items:center;gap:8px;background:#fdf2f2;color:#b71c1c;border:1px solid #f6cacc;border-radius:999px;padding:6px 10px;font-weight:800}
+  .ok{color:var(--ok);font-weight:700}
+  .muted{color:var(--muted)}
+
+  footer.app{color:#7b8794;text-align:center;margin:18px 0;font-size:.9rem}
+</style>
+</head>
+<body>
+  <header class="app">
+    <div class="container">
+      <div class="brand" aria-label="RIMAC">
+        <div class="mark" aria-hidden="true">R</div>
+        <div class="title">
+          <span class="kicker">RIMAC</span>
+          <h1>Solicitud de Atención Médica | Seguros Rimac</h1>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="card">
+      <div class="progress" aria-hidden="true">
+        <div class="step"><span id="pb1"></span></div>
+        <div class="step"><span id="pb2"></span></div>
+        <div class="step"><span id="pb3"></span></div>
+        <div class="step"><span id="pb4"></span></div>
+        <div class="step"><span id="pb5"></span></div>
+      </div>
+      <div class="progress-labels">
+        <span>Inicio</span><span>Paciente</span><span>Atención</span><span>Centro</span><span>Confirmación</span>
+      </div>
+
+      <!-- 0. Inicio -->
+      <section id="scr0" class="screen visible">
+        <h2 class="section">🏥 Solicitar atención médica</h2>
+        <p class="lead">Completá los pasos para solicitar una atención. Te asignaremos una cita automática y un código de seguimiento.</p>
+        <div class="actions">
+          <button class="btn" id="start">Iniciar</button>
+        </div>
+      </section>
+
+      <!-- 1. Datos del paciente -->
+      <section id="scr1" class="screen">
+        <h2 class="section">🧑‍⚕️ Datos del paciente</h2>
+        <div class="grid cols-2">
+          <div>
+            <label for="nombre">Nombre completo</label>
+            <input id="nombre" placeholder="Ej. Carla Ramos">
+          </div>
+          <div>
+            <label for="doc">Documento</label>
+            <input id="doc" placeholder="DNI / CE">
+          </div>
+          <div>
+            <label for="correo">Correo</label>
+            <input id="correo" type="email" placeholder="tucorreo@dominio.com">
+          </div>
+          <div>
+            <label for="tel">Celular</label>
+            <input id="tel" placeholder="9xxxxxxxx">
+          </div>
+          <div>
+            <label for="nac">Fecha de nacimiento</label>
+            <input id="nac" type="date">
+          </div>
+          <div>
+            <label for="plan">Plan de salud</label>
+            <select id="plan">
+              <option>Básico</option>
+              <option>Regular</option>
+              <option>Completo</option>
+            </select>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn secondary" data-back="0">Volver</button>
+          <button class="btn" id="to2">Siguiente</button>
+        </div>
+      </section>
+
+      <!-- 2. Tipo de atención -->
+      <section id="scr2" class="screen">
+        <h2 class="section">📋 Tipo de atención</h2>
+        <div class="grid">
+          <label><input type="radio" name="tipo" value="Emergencia"> Emergencia</label>
+          <label><input type="radio" name="tipo" value="Consulta general"> Consulta general</label>
+          <label><input type="radio" name="tipo" value="Especialidad"> Especialidad</label>
+          <label><input type="radio" name="tipo" value="Exámenes y pruebas"> Exámenes y pruebas</label>
+        </div>
+        <div class="grid cols-2" style="margin-top:10px">
+          <div>
+            <label for="urg">Urgencia</label>
+            <select id="urg">
+              <option value="">Seleccionar…</option>
+              <option>Alta (hoy)</option>
+              <option>Media (48h)</option>
+              <option>Baja (72h+)</option>
+            </select>
+          </div>
+          <div>
+            <label for="sintomas">Síntomas o motivo</label>
+            <input id="sintomas" placeholder="Ej. dolor de garganta, control anual, análisis, etc.">
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn secondary" data-back="1">Volver</button>
+          <button class="btn" id="to3">Siguiente</button>
+        </div>
+      </section>
+
+      <!-- 3. Centro médico y preferencia de agenda -->
+      <section id="scr3" class="screen">
+        <h2 class="section">🏨 Centro médico y agenda</h2>
+        <div class="grid cols-2">
+          <div>
+            <label for="centro">Centro preferido</label>
+            <select id="centro">
+              <option value="">Seleccionar…</option>
+              <option>Clínica Internacional</option>
+              <option>Clínica Javier Prado</option>
+              <option>Clínica Delgado</option>
+              <option>Red afiliada</option>
+            </select>
+          </div>
+          <div>
+            <label for="prefFecha">Fecha preferida</label>
+            <input id="prefFecha" type="date">
+          </div>
+          <div>
+            <label for="prefHora">Hora preferida</label>
+            <input id="prefHora" type="time">
+          </div>
+          <div>
+            <label for="telemed">¿Telemedicina?</label>
+            <select id="telemed">
+              <option>No</option>
+              <option>Sí</option>
+            </select>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn secondary" data-back="2">Volver</button>
+          <button class="btn" id="to4">Siguiente</button>
+        </div>
+      </section>
+
+      <!-- 4. Confirmación -->
+      <section id="scr4" class="screen">
+        <h2 class="section">🔎 Confirmación</h2>
+        <p class="lead">Revisá y confirmá tu solicitud.</p>
+        <div id="resumen" class="summary"></div>
+        <div class="actions">
+          <button class="btn secondary" data-back="3">Volver</button>
+          <button class="btn" id="enviar">Solicitar atención</button>
+        </div>
+      </section>
+
+      <!-- 5. Resultado: cita asignada -->
+      <section id="scr5" class="screen">
+        <h2 class="section">✅ Cita asignada</h2>
+        <p class="lead"><span class="ok">¡Listo!</span> Te asignamos una cita automática. Conservá el siguiente código:</p>
+        <p><span id="codigo" class="code">MED-00000</span></p>
+        <div id="detalleCita" class="summary" style="margin-top:10px"></div>
+        <div class="actions">
+          <button class="btn" id="descargar">Descargar constancia (TXT)</button>
+          <button class="btn ghost" id="ics">Agregar al calendario (ICS)</button>
+          <button class="btn" id="nueva">Nueva solicitud</button>
+        </div>
+      </section>
+    </div>
+
+    <footer class="app">© 2025 Seguros Rimac · Portal de Servicios Médicos (Demo)</footer>
+  </main>
+
+<script>
+  // ===== Estado en memoria =====
+  const state = { paciente:{}, atencion:{}, centro:{}, codigo:null, cita:{} };
+  const screens = ['scr0','scr1','scr2','scr3','scr4','scr5'];
+  const $ = s => document.querySelector(s);
+  const $$ = s => document.querySelectorAll(s);
+
+  function show(i){
+    screens.forEach((id,idx)=>{ const el=document.getElementById(id); if(el) el.classList.toggle('visible', idx===i); });
+    const bars=['#pb1','#pb2','#pb3','#pb4','#pb5'];
+    bars.forEach((sel,idx)=>{ const b=$(sel); if(b){ b.style.width = (i>idx? '100%': i===idx? '60%':'0'); }});
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  const required = v => v && String(v).trim().length>0;
+  const genCode = (pfx) => `${pfx}-${Math.floor(Math.random()*90000+10000)}`;
+  const fmt = x => x || '—';
+
+  // Inicio
+  $('#start').addEventListener('click',()=> show(1));
+
+  // 1. Datos del paciente
+  $('#to2').addEventListener('click',()=>{
+    const nombre=$('#nombre').value.trim();
+    const doc=$('#doc').value.trim();
+    const correo=$('#correo').value.trim();
+    const tel=$('#tel').value.trim();
+    const nac=$('#nac').value;
+    const plan=$('#plan').value;
+    if(!required(nombre)) return alert('Ingresá tu nombre.');
+    if(!required(doc)) return alert('Ingresá tu documento.');
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) return alert('Correo inválido.');
+    if(!/^\d{9}$/.test(tel)) return alert('Celular inválido (9 dígitos).');
+    if(!nac) return alert('Seleccioná tu fecha de nacimiento.');
+
+    state.paciente={nombre,doc,correo,tel,nac,plan};
+    show(2);
+  });
+
+  // Botones volver (data-back)
+  $$('.btn.secondary[data-back]').forEach(btn=>{
+    btn.addEventListener('click',()=>{ const to=parseInt(btn.getAttribute('data-back'),10); show(to); });
+  });
+
+  // 2. Tipo de atención
+  $('#to3').addEventListener('click',()=>{
+    const sel = document.querySelector('input[name="tipo"]:checked');
+    const urg = $('#urg').value;
+    const sintomas = $('#sintomas').value.trim();
+    if(!sel) return alert('Seleccioná un tipo de atención.');
+    if(!urg) return alert('Seleccioná un nivel de urgencia.');
+    state.atencion={tipo:sel.value, urgencia:urg, sintomas};
+    show(3);
+  });
+
+  // 3. Centro y agenda
+  $('#to4').addEventListener('click',()=>{
+    const centro=$('#centro').value;
+    const prefFecha=$('#prefFecha').value;  // puede estar vacío
+    const prefHora=$('#prefHora').value;    // puede estar vacío
+    const telemed=$('#telemed').value;
+    if(!centro) return alert('Seleccioná un centro médico.');
+    state.centro={centro,prefFecha,prefHora,telemed};
+
+    // Armar resumen
+    const r=$('#resumen'); const p=state.paciente; const a=state.atencion; const c=state.centro;
+    r.innerHTML = `
+      <div class="item"><strong>Paciente:</strong> ${fmt(p.nombre)} · <span class="muted">${fmt(p.doc)}</span></div>
+      <div class="item"><strong>Contacto:</strong> ${fmt(p.correo)} · ${fmt(p.tel)}</div>
+      <div class="item"><strong>Atención:</strong> ${fmt(a.tipo)} · Urgencia: ${fmt(a.urgencia)}</div>
+      <div class="item"><strong>Síntomas:</strong> ${fmt(a.sintomas)}</div>
+      <div class="item"><strong>Centro:</strong> ${fmt(c.centro)} · Telemedicina: ${fmt(c.telemed)}</div>
+      <div class="item"><strong>Preferencia:</strong> ${c.prefFecha? c.prefFecha: 'No especificada'} ${c.prefHora? '· '+c.prefHora:''}</div>
+    `;
+    show(4);
+  });
+
+  // 4. Enviar → asignar cita automática
+  $('#enviar').addEventListener('click',()=>{
+    state.codigo = genCode('MED');
+    $('#codigo').textContent = state.codigo;
+
+    // Simular slots disponibles por centro (horas locales)
+    const base = new Date();
+    base.setMinutes(0,0,0);
+    const slots = [];
+    for(let d=0; d<7; d++){
+      for(let h of [9,10,11,12,15,16,17]){
+        const t=new Date(base); t.setDate(base.getDate()+d); t.setHours(h);
+        slots.push(t);
+      }
+    }
+    // Preferencias
+    const pf = state.centro.prefFecha ? new Date(state.centro.prefFecha+'T00:00') : new Date();
+    const ph = state.centro.prefHora ? state.centro.prefHora.split(':').map(Number) : null;
+    if(ph){ pf.setHours(ph[0],ph[1]||0,0,0); }
+
+    // Ajustar por urgencia
+    const urg = state.atencion.urgencia;
+    let limitHours = 72; if(urg.includes('Alta')) limitHours=6; else if(urg.includes('Media')) limitHours=48;
+    const limit = new Date(); limit.setHours(limit.getHours()+limitHours);
+
+    // Elegir el primer slot ≥ preferencia y ≤ límite (siempre escoger alguno)
+    let elegido = slots.find(t=> t>=pf && t<=limit) || slots[0];
+    state.cita = { fecha: elegido.toLocaleDateString(), hora: elegido.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}), centro: state.centro.centro, telemed: state.centro.telemed };
+
+    const p=state.paciente, a=state.atencion, c=state.cita;
+    $('#detalleCita').innerHTML = `
+      <div class="item"><strong>Código:</strong> <span class="code">${state.codigo}</span></div>
+      <div class="item"><strong>Paciente:</strong> ${fmt(p.nombre)} · <span class="muted">${fmt(p.doc)}</span></div>
+      <div class="item"><strong>Atención:</strong> ${fmt(a.tipo)} · Urgencia: ${fmt(a.urgencia)} · Telemedicina: ${fmt(state.centro.telemed)}</div>
+      <div class="item"><strong>Centro:</strong> ${fmt(c.centro)}</div>
+      <div class="item"><strong>Fecha y hora:</strong> ${c.fecha} · ${c.hora}</div>
+      <div class="item"><strong>Motivo:</strong> ${fmt(a.sintomas)}</div>
+    `;
+    show(5);
+  });
+
+  // 5. Acciones finales
+  $('#descargar').addEventListener('click',()=>{
+    const p=state.paciente, a=state.atencion, c=state.cita;
+    const txt=[
+      '--- CONSTANCIA DE CITA MÉDICA (DEMO) ---',
+      `Código: ${state.codigo}`,
+      `Paciente: ${p.nombre} (${p.doc})`,
+      `Contacto: ${p.correo} · ${p.tel}`,
+      `Atención: ${a.tipo} · Urgencia: ${a.urgencia} · Telemedicina: ${state.centro.telemed}`,
+      `Centro: ${c.centro}`,
+      `Fecha/Hora: ${c.fecha} ${c.hora}`,
+      `Motivo: ${a.sintomas}`,
+      '----------------------------------------'
+    ].join('\n');
+    const blob=new Blob([txt],{type:'text/plain'});
+    const ael=document.createElement('a');
+    ael.href=URL.createObjectURL(blob);
+    ael.download=`cita_${state.codigo}.txt`;
+    ael.click();
+  });
+
+  // Crear archivo ICS para agregar al calendario
+  $('#ics').addEventListener('click',()=>{
+    // Construir timestamps YYYYMMDDTHHMMSS
+    const now=new Date();
+    const c=state.cita; const p=state.paciente; const center=state.centro.centro;
+    // Parsear fecha/hora local a Date
+    const [d,m,y] = c.fecha.split('/'); // según locale puede variar; fallback
+    let dt=new Date(`${y||now.getFullYear()}-${m||'01'}-${d||'01'}T${c.hora}:00`);
+    if(isNaN(dt)) dt=now;
+    const dtEnd=new Date(dt.getTime()+45*60000);
+    const toICS=(d)=> d.toISOString().replace(/[-:]/g,'').replace(/\.\d{3}Z$/,'Z');
+    const ics=`BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Rimac//Cita Medica Demo//ES\nBEGIN:VEVENT\nUID:${state.codigo}@rimac.pe\nDTSTAMP:${toICS(now)}\nDTSTART:${toICS(dt)}\nDTEND:${toICS(dtEnd)}\nSUMMARY:Atención médica - ${state.atencion.tipo}\nDESCRIPTION:Paciente ${p.nombre} (${p.doc}). Motivo: ${state.atencion.sintomas}\nLOCATION:${center}\nEND:VEVENT\nEND:VCALENDAR`;
+    const blob=new Blob([ics],{type:'text/calendar'});
+    const ael=document.createElement('a'); ael.href=URL.createObjectURL(blob); ael.download=`cita_${state.codigo}.ics`; ael.click();
+  });
+
+  $('#nueva').addEventListener('click',()=>{
+    document.querySelectorAll('input,select,textarea').forEach(e=> e.value='');
+    document.querySelectorAll('input[name="tipo"]').forEach(r=> r.checked=false);
+    Object.keys(state).forEach(k=> state[k]= typeof state[k]==='object'? {}: null);
+    show(0);
+  });
+</script>
+</body>
+</html>

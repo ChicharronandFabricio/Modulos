@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stakeholder Banco | Sistema Financiero Rimac</title>
+
+<style>
+/* ===== PALETA ROJA RIMAC ===== */
+:root{
+  --accent:#d32f2f;
+  --accent-dark:#b71c1c;
+  --bg:#f7f7f7;
+  --card:#ffffff;
+  --text:#222;
+  --muted:#666;
+  --border:#e0e0e0;
+  --green:#0f9d58;
+}
+
+/* ===== ESTILOS BASE ===== */
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  font-family:"Segoe UI",Roboto,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+
+header{
+  background:linear-gradient(90deg,var(--accent),var(--accent-dark));
+  color:#fff;
+  padding:16px 18px;
+  box-shadow:0 2px 6px rgba(0,0,0,.2);
+}
+
+header h1{
+  margin:0;
+  font-size:1.35rem;
+  letter-spacing:.03em;
+}
+
+header small{
+  opacity:.8;
+}
+
+.header-user{
+  margin-top:6px;
+  font-size:.85rem;
+  background:rgba(255,255,255,.15);
+  padding:4px 10px;
+  border-radius:999px;
+  display:inline-block;
+}
+
+/* ===== SECCIONES ===== */
+main{
+  max-width:1100px;
+  margin:28px auto;
+  padding:0 16px;
+}
+
+.pantalla{display:none;}
+.pantalla.visible{
+  display:block;
+  animation:fadeIn .25s ease;
+}
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(6px);}
+  to{opacity:1;transform:none;}
+}
+
+/* ===== TARJETAS ===== */
+.card{
+  background:var(--card);
+  border-radius:12px;
+  border:1px solid var(--border);
+  padding:20px;
+  box-shadow:0 6px 16px rgba(0,0,0,.06);
+}
+
+h2{
+  margin:0 0 10px;
+  color:var(--accent-dark);
+}
+
+p.lead{
+  color:var(--muted);
+  margin-top:2px;
+  margin-bottom:14px;
+}
+
+/* ===== GRID PRINCIPAL ===== */
+.dashboard{
+  display:grid;
+  grid-template-columns:300px minmax(0,1fr);
+  gap:16px;
+}
+@media(max-width:900px){
+  .dashboard{grid-template-columns:1fr;}
+}
+
+/* ===== PANEL IZQUIERDO ===== */
+.panel-control{
+  display:flex;
+  flex-direction:column;
+  gap:22px;
+}
+
+.section-title{
+  font-size:.9rem;
+  font-weight:700;
+  text-transform:uppercase;
+  color:var(--muted);
+  letter-spacing:.05em;
+  margin-bottom:6px;
+}
+
+.btn-panel{
+  padding:12px 14px;
+  border-radius:10px;
+  border:1px solid var(--border);
+  background:#fff;
+  cursor:pointer;
+  font-weight:600;
+  text-align:left;
+}
+.btn-panel.primary{
+  background:var(--accent);
+  color:#fff;
+  border-color:var(--accent);
+}
+.btn-panel.primary:hover{background:var(--accent-dark);}
+
+.btn-panel small{
+  display:block;
+  font-size:.8rem;
+  color:var(--muted);
+}
+
+/* ===== ESTADO ===== */
+.estado-box{
+  padding:10px 12px;
+  border-radius:10px;
+  background:#fdecea;
+  color:var(--accent-dark);
+  border:1px solid #ef9a9a;
+  font-size:.9rem;
+}
+
+/* ===== RESUMEN ===== */
+.resumen-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+  margin-top:6px;
+}
+
+.res-item{
+  background:#fafafa;
+  border-radius:9px;
+  padding:10px;
+  border:1px solid var(--border);
+}
+.res-label{
+  color:var(--muted);
+  font-size:.78rem;
+}
+.res-value{
+  font-weight:700;
+  margin-top:3px;
+}
+
+/* ===== REGISTRO ===== */
+.registro{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.registro-lista{
+  border:1px solid var(--border);
+  border-radius:10px;
+  background:#fff;
+  max-height:360px;
+  overflow:auto;
+}
+
+.reg-item{
+  display:grid;
+  grid-template-columns:90px 1fr 90px 90px;
+  gap:8px;
+  padding:10px;
+  border-bottom:1px solid #f1f1f1;
+  font-size:.86rem;
+}
+.reg-item:last-child{border-bottom:none;}
+
+.tipo{
+  font-weight:700;
+  font-size:.78rem;
+}
+.tipo.pago{color:var(--accent);}
+.tipo.prestamo{color:#006bb3;}
+.tipo.reporte{color:#6a1b9a;}
+
+.detalle{color:#444;}
+
+.monto{text-align:right;font-weight:700;}
+
+.estado{font-size:.78rem;text-align:right;color:var(--muted);}
+
+/* ===== FORMULARIOS ===== */
+label{
+  margin-top:10px;
+  font-size:.9rem;
+  font-weight:600;
+}
+
+input,select,textarea{
+  width:100%;
+  padding:8px 10px;
+  border-radius:8px;
+  border:1px solid #ccc;
+  margin-top:4px;
+  font-size:.9rem;
+}
+
+textarea{resize:vertical;}
+
+.actions{
+  margin-top:16px;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.btn{
+  padding:10px 14px;
+  font-weight:600;
+  border-radius:8px;
+  cursor:pointer;
+  border:none;
+}
+.btn-primary{
+  background:var(--accent);
+  color:#fff;
+}
+.btn-primary:hover{background:var(--accent-dark);}
+.btn-secondary{
+  background:#fff;
+  color:var(--accent-dark);
+  border:1px solid var(--border);
+}
+
+/* FOOTER */
+footer{
+  text-align:center;
+  color:var(--muted);
+  margin-top:20px;
+  font-size:.85rem;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>Stakeholder – Banco</h1>
+  <small>Sistema Financiero Interno Rimac</small><br>
+  <div class="header-user">Usuario: Banco Central</div>
+</header>
+
+<main>
+
+<!-- ===== PANTALLA 1 ===== -->
+<section id="p1" class="pantalla visible">
+  <div class="card">
+    <h2>Bienvenido al Sistema Financiero</h2>
+    <p class="lead">
+      Desde aquí podrás registrar pagos, gestionar préstamos y generar reportes,
+      manteniendo coherencia con el ecosistema Rimac.
+    </p>
+    <button class="btn btn-primary" onclick="irPanel()">Ingresar al Panel</button>
+  </div>
+</section>
+
+<!-- ===== PANTALLA 2: DASHBOARD ===== -->
+<section id="p2" class="pantalla">
+  <div class="dashboard">
+
+    <!-- PANEL IZQUIERDO -->
+    <div class="panel-control">
+
+      <div>
+        <div class="section-title">Acciones</div>
+        <button class="btn-panel primary" onclick="mostrar(3)">
+          Registrar pago
+          <small>Cobranza proveniente de cualquier stakeholder</small>
+        </button>
+        <button class="btn-panel" onclick="mostrar(4)">
+          Solicitar préstamo
+          <small>Crédito simulado para este sistema</small>
+        </button>
+        <button class="btn-panel" onclick="mostrar(5)">
+          Generar reporte
+          <small>Resumen financiero completo</small>
+        </button>
+      </div>
+
+      <div>
+        <div class="section-title">Estado del sistema</div>
+        <div class="estado-box">
+          ✓ Sistema operativo — funcionando con normalidad.
+        </div>
+      </div>
+
+      <div>
+        <div class="section-title">Resumen financiero</div>
+        <div class="resumen-grid">
+          <div class="res-item">
+            <div class="res-label">Saldo</div>
+            <div class="res-value">S/ <span id="saldo">0.00</span></div>
+          </div>
+          <div class="res-item">
+            <div class="res-label">Créditos activos</div>
+            <div class="res-value" id="creditos">0</div>
+          </div>
+          <div class="res-item">
+            <div class="res-label">Pagos hoy</div>
+            <div class="res-value" id="pagos">0</div>
+          </div>
+          <div class="res-item">
+            <div class="res-label">Pendientes</div>
+            <div class="res-value" id="pendientes">0</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- PANEL DERECHO: REGISTRO -->
+    <div class="card registro">
+      <div class="section-title">Registro de operaciones</div>
+
+      <div class="registro-lista" id="listaRegistro"></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===== PANTALLA 3: PAGO ===== -->
+<section id="p3" class="pantalla">
+  <div class="card">
+    <h2>Registrar Pago</h2>
+    <form id="formPago">
+      <label>Stakeholder origen</label>
+      <select id="origen">
+        <option value="">Seleccionar</option>
+        <option>Atención Médica</option>
+        <option>Salud/Cliente</option>
+        <option>Inversionistas</option>
+        <option>Medios</option>
+      </select>
+
+      <label>Monto (S/)</label>
+      <input id="montoPago" type="number" min="1">
+
+      <label>Descripción</label>
+      <textarea id="descPago"></textarea>
+
+      <div class="actions">
+        <button class="btn btn-primary">Registrar</button>
+        <button type="button" class="btn btn-secondary" onclick="mostrar(2)">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- ===== PANTALLA 4: PRÉSTAMO ===== -->
+<section id="p4" class="pantalla">
+  <div class="card">
+    <h2>Registrar Préstamo</h2>
+    <form id="formPrestamo">
+      <label>Cliente</label>
+      <input id="clientePrestamo">
+
+      <label>Monto solicitado</label>
+      <input id="montoPrestamo" type="number" min="1">
+
+      <label>Plazo (meses)</label>
+      <input id="plazoPrestamo" type="number" min="1">
+
+      <label>Tasa anual (%)</label>
+      <input id="tasaPrestamo" type="number" min="0" max="100">
+
+      <label>Destino</label>
+      <textarea id="destinoPrestamo"></textarea>
+
+      <div class="actions">
+        <button class="btn btn-primary">Registrar</button>
+        <button type="button" class="btn btn-secondary" onclick="mostrar(2)">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- ===== PANTALLA 5: REPORTE ===== -->
+<section id="p5" class="pantalla">
+  <div class="card">
+    <h2>Reporte Financiero</h2>
+    <pre id="reporte"></pre>
+
+    <div class="actions">
+      <button class="btn btn-primary" onclick="descargarReporte()">Descargar TXT</button>
+      <button class="btn btn-secondary" onclick="mostrar(2)">Volver</button>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PANTALLA 6: CONFIRMACIÓN ===== -->
+<section id="p6" class="pantalla">
+  <div class="card">
+    <h2>✓ Operación registrada</h2>
+    <p class="lead" id="confirmMsg"></p>
+    <button class="btn btn-primary" onclick="mostrar(2)">Volver al Panel</button>
+  </div>
+</section>
+
+</main>
+
+<footer>© 2025 Stakeholder Banco – Rimac (Simulación)</footer>
+
+<script>
+// ======= ESTADO DEL SISTEMA =======
+const state = {
+  saldo: 1000000,
+  creditos: 3,
+  pagos: 0,
+  pendientes: 0,
+  registro:[]
+};
+
+function $(s){return document.querySelector(s);}
+
+function mostrar(n){
+  document.querySelectorAll('.pantalla').forEach(x=>x.classList.remove('visible'));
+  document.getElementById("p"+n).classList.add('visible');
+  window.scrollTo(0,0);
+}
+
+function irPanel(){
+  actualizarResumen();
+  renderRegistro();
+  mostrar(2);
+}
+
+function actualizarResumen(){
+  $('#saldo').textContent = state.saldo.toLocaleString('es-PE',{minimumFractionDigits:2});
+  $('#creditos').textContent = state.creditos;
+  $('#pagos').textContent = state.pagos;
+  $('#pendientes').textContent = state.pendientes;
+}
+
+function registrarOperacion(op){
+  state.registro.unshift(op);
+  actualizarResumen();
+  renderRegistro();
+}
+
+function renderRegistro(){
+  const cont = $('#listaRegistro');
+  if(!state.registro.length){
+    cont.innerHTML = "<div style='padding:12px;color:#888;'>Sin operaciones registradas</div>";
+    return;
+  }
+  cont.innerHTML = state.registro.map(op=>`
+    <div class="reg-item">
+      <div>
+        <div class="tipo ${op.tipo.toLowerCase()}">${op.tipo}</div>
+        <small>${op.codigo}</small>
+      </div>
+      <div class="detalle">${op.detalle}</div>
+      <div class="monto">${op.monto? 'S/ '+op.monto.toFixed(2): '—'}</div>
+      <div class="estado">
+        ${op.estado}<br>
+        <small>${op.fecha}</small>
+      </div>
+    </div>
+  `).join("");
+}
+
+// ====== FORMULARIO PAGO ======
+$('#formPago').addEventListener('submit', e=>{
+  e.preventDefault();
+
+  const origen = $('#origen').value;
+  const monto = parseFloat($('#montoPago').value);
+  const desc = $('#descPago').value;
+
+  if(!origen || !monto || !desc) return alert("Completa todos los campos.");
+
+  const codigo = "PAY-"+Math.floor(Math.random()*99999);
+  state.saldo += monto;
+  state.pagos++;
+
+  registrarOperacion({
+    tipo:"Pago",
+    codigo,
+    origen,
+    monto,
+    detalle:desc,
+    estado:"Procesado",
+    fecha:new Date().toLocaleString()
+  });
+
+  $('#confirmMsg').innerHTML = `Se registró el pago <b>${codigo}</b> correctamente.`;
+  mostrar(6);
+});
+
+// ====== FORMULARIO PRESTAMO ======
+$('#formPrestamo').addEventListener('submit', e=>{
+  e.preventDefault();
+
+  const nombre = $('#clientePrestamo').value;
+  const monto = parseFloat($('#montoPrestamo').value);
+  const plazo = parseInt($('#plazoPrestamo').value);
+  const tasa = parseFloat($('#tasaPrestamo').value);
+  const dest = $('#destinoPrestamo').value;
+
+  if(!nombre || !monto || !plazo || !tasa || !dest) return alert("Completa todos los campos.");
+
+  const codigo = "CRE-"+Math.floor(Math.random()*99999);
+
+  state.saldo -= monto;
+  state.creditos++;
+
+  registrarOperacion({
+    tipo:"Préstamo",
+    codigo,
+    monto,
+    detalle:`Crédito a ${nombre} por S/ ${monto.toFixed(2)} a ${plazo} meses (${tasa}% T.E.A). Destino: ${dest}`,
+    estado:"Pendiente",
+    fecha:new Date().toLocaleString()
+  });
+
+  $('#confirmMsg').innerHTML = `Préstamo <b>${codigo}</b> registrado.`;
+  mostrar(6);
+});
+
+// ===== REPORTE =====
+function generarReporte(){
+  return [
+    "---- REPORTE FINANCIERO BANCO (SIMULADO) ----",
+    "Fecha: " + new Date().toLocaleString(),
+    "",
+    "Saldo actual: S/ " + state.saldo.toFixed(2),
+    "Créditos activos: " + state.creditos,
+    "Pagos hoy: " + state.pagos,
+    "Pendientes: " + state.pendientes,
+    "",
+    "Operaciones registradas:",
+    ...state.registro.map(op=>`[${op.tipo}] ${op.codigo} | ${op.detalle} | ${op.monto? 'S/ '+op.monto.toFixed(2):'—'} | ${op.estado}`)
+  ].join("\n");
+}
+
+function descargarReporte(){
+  const txt = generarReporte();
+  const blob = new Blob([txt],{type:"text/plain"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "reporte_banco.txt";
+  a.click();
+}
+
+$('#p5').addEventListener('mouseenter', ()=>{
+  $('#reporte').textContent = generarReporte();
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stakeholder – Gobierno | Sistema Rimac</title>
+
+<style>
+:root{
+  --accent:#d32f2f;
+  --accent-dark:#b71c1c;
+  --bg:#f5f6f8;
+  --card:#ffffff;
+  --text:#222;
+  --muted:#777;
+  --border:#e0e0e0;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  background:var(--bg);
+  font-family:"Segoe UI",Roboto,Arial,sans-serif;
+  color:var(--text);
+}
+
+/* HEADER */
+header{
+  background:linear-gradient(90deg,var(--accent),var(--accent-dark));
+  padding:18px 20px;
+  color:#fff;
+  box-shadow:0 3px 10px rgba(0,0,0,.2);
+}
+header h1{margin:0;font-size:1.6rem;font-weight:700;}
+header small{opacity:.9;font-size:.9rem;}
+
+main{
+  max-width:1150px;
+  margin:26px auto 32px;
+  padding:0 16px;
+}
+
+/* GENERALES */
+.card{
+  background:var(--card);
+  border-radius:16px;
+  border:1px solid var(--border);
+  box-shadow:0 5px 18px rgba(0,0,0,.06);
+  padding:18px 20px;
+}
+h2{margin-bottom:8px;color:var(--accent-dark);}
+.small{font-size:.86rem;color:var(--muted);}
+
+/* ACCIONES GRANDES */
+.actions-row{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:16px;
+  margin-bottom:20px;
+}
+@media(max-width:900px){
+  .actions-row{grid-template-columns:1fr;}
+}
+.action-card{
+  background:var(--card);
+  border-radius:16px;
+  border:1px solid var(--border);
+  padding:16px 16px 14px;
+  cursor:pointer;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  transition:transform .16s, box-shadow .16s, border-color .16s;
+}
+.action-card:hover{
+  transform:translateY(-3px);
+  box-shadow:0 10px 24px rgba(0,0,0,.08);
+  border-color:var(--accent);
+}
+.action-icon{
+  width:34px;height:34px;
+  border-radius:12px;
+  background:rgba(211,47,47,.08);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1.2rem;
+  margin-bottom:4px;
+}
+.action-title{
+  font-weight:700;
+  color:var(--accent-dark);
+}
+.action-desc{
+  font-size:.86rem;
+  color:var(--muted);
+}
+
+/* BLOQUES CENTRALES */
+.main-grid{
+  display:grid;
+  grid-template-columns:2fr 1.6fr;
+  gap:18px;
+  margin-bottom:20px;
+}
+@media(max-width:900px){
+  .main-grid{grid-template-columns:1fr;}
+}
+
+/* Estado */
+.estado-pill{
+  display:inline-block;
+  padding:6px 12px;
+  border-radius:999px;
+  background:#ffecec;
+  color:var(--accent-dark);
+  font-size:.84rem;
+  font-weight:600;
+  border:1px solid #ffcdd2;
+  margin-top:6px;
+}
+
+/* Indicadores */
+.indicadores-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+  margin-top:10px;
+}
+.ind-card{
+  background:#fafafa;
+  border-radius:12px;
+  border:1px solid var(--border);
+  padding:10px 12px;
+}
+.ind-label{
+  font-size:.8rem;
+  color:var(--muted);
+}
+.ind-value{
+  font-weight:700;
+  margin-top:3px;
+}
+
+/* Resumen inspección / trazabilidad */
+.resumen-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+@media(max-width:700px){
+  .resumen-grid{grid-template-columns:1fr;}
+}
+
+/* Registro */
+.registro-card{
+  margin-top:10px;
+}
+.registro-lista{
+  max-height:260px;
+  overflow:auto;
+  margin-top:10px;
+}
+.log-item{
+  background:#fafafa;
+  border-radius:10px;
+  border:1px solid #eee;
+  padding:9px 10px;
+  font-size:.88rem;
+  margin-bottom:8px;
+}
+
+/* INPUTS GENERALES */
+input,select,textarea{
+  width:100%;
+  padding:9px 11px;
+  border-radius:8px;
+  border:1px solid #ccc;
+  margin-top:5px;
+  font-size:.9rem;
+}
+textarea{resize:vertical;}
+
+/* BOTONES MODAL */
+.btn{
+  padding:10px 14px;
+  border-radius:8px;
+  border:none;
+  cursor:pointer;
+  font-weight:600;
+  font-size:.92rem;
+}
+.btn-primary{
+  background:var(--accent);
+  color:#fff;
+}
+.btn-primary:hover{background:var(--accent-dark);}
+.btn-ghost{
+  background:#fff;
+  border:1px solid var(--border);
+  color:var(--accent-dark);
+}
+
+/* MODAL */
+#modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.45);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:999;
+}
+.modal-card{
+  background:#fff;
+  width:92%;
+  max-width:720px;
+  border-radius:14px;
+  padding:20px 20px 18px;
+  box-shadow:0 18px 40px rgba(0,0,0,.25);
+}
+.modal-header{
+  margin-bottom:12px;
+}
+.modal-actions{
+  margin-top:16px;
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>Stakeholder — Gobierno</h1>
+  <small>Supervisión, auditoría y cumplimiento regulatorio</small>
+</header>
+
+<main>
+
+  <!-- ACCIONES GRANDES -->
+  <section class="actions-row">
+    <article class="action-card" onclick="openModal('inspeccion')">
+      <div class="action-icon">📝</div>
+      <div class="action-title">Solicitar inspección</div>
+      <div class="action-desc">
+        Programar visitas regulatorias a centros médicos, procesos o atención al cliente.
+      </div>
+    </article>
+
+    <article class="action-card" onclick="openModal('auditoria')">
+      <div class="action-icon">📑</div>
+      <div class="action-title">Emitir auditoría</div>
+      <div class="action-desc">
+        Registrar auditorías financieras, operativas o de siniestros dentro del sistema.
+      </div>
+    </article>
+
+    <article class="action-card" onclick="openModal('traza')">
+      <div class="action-icon">🔍</div>
+      <div class="action-title">Reporte de trazabilidad</div>
+      <div class="action-desc">
+        Consultar historial y seguimiento de casos, pólizas y proveedores médicos.
+      </div>
+    </article>
+  </section>
+
+  <!-- ESTADO + INDICADORES / RESUMEN -->
+  <section class="main-grid">
+    <!-- Columna izquierda: estado + registro -->
+    <div>
+      <div class="card">
+        <h2>Estado regulatorio</h2>
+        <p class="small">Visión general del cumplimiento actual del ecosistema Rimac.</p>
+        <span id="estadoGov" class="estado-pill">Sin incidencias</span>
+
+        <div style="margin-top:14px;">
+          <h3 style="margin:0 0 4px;font-size:1rem;color:var(--accent-dark);">Indicadores</h3>
+          <div class="indicadores-grid">
+            <div class="ind-card">
+              <div class="ind-label">Inspecciones pendientes</div>
+              <div class="ind-value" id="pendientes">0</div>
+            </div>
+            <div class="ind-card">
+              <div class="ind-label">Auditorías emitidas</div>
+              <div class="ind-value" id="audits">0</div>
+            </div>
+            <div class="ind-card">
+              <div class="ind-label">Reportes generados</div>
+              <div class="ind-value" id="reportes">0</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card registro-card">
+        <h2>Registro de actividades</h2>
+        <input id="filtro" placeholder="Filtrar por texto..." oninput="filtrar()">
+        <div id="log" class="registro-lista"></div>
+      </div>
+    </div>
+
+    <!-- Columna derecha: resumen -->
+    <div class="card">
+      <h2>Resumen reciente</h2>
+      <p class="small">Últimos hitos de supervisión del Gobierno sobre el sistema.</p>
+
+      <div class="resumen-grid" style="margin-top:12px;">
+        <div class="card" style="background:#fafafa;border-radius:12px;border:1px solid var(--border);box-shadow:none;">
+          <p class="small">Última inspección</p>
+          <div style="font-size:.9rem;margin-top:4px;">
+            Fecha: <b id="insFecha">—</b><br>
+            Resultado: <b id="insRes">—</b>
+          </div>
+        </div>
+
+        <div class="card" style="background:#fafafa;border-radius:12px;border:1px solid var(--border);box-shadow:none;">
+          <p class="small">Último reporte de trazabilidad</p>
+          <div style="font-size:.9rem;margin-top:4px;">
+            ID de referencia: <b id="lote">—</b><br>
+            Área / categoría: <b id="proveedor">—</b>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- MODAL -->
+<div id="modal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h2 id="mTitle"></h2>
+      <p class="small" id="mSub"></p>
+    </div>
+
+    <div id="mBody"></div>
+
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" id="mAction">Procesar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===== ESTADOS GENERALES ===== */
+const logs=[];
+let pendientes=0,audits=0,reportes=0;
+
+function addLog(txt){
+  const d=new Date().toLocaleString();
+  logs.unshift(`${d} — ${txt}`);
+  render();
+}
+
+function render(filter=""){
+  const logDiv=document.querySelector("#log");
+  logDiv.innerHTML="";
+  logs
+    .filter(x=>x.toLowerCase().includes(filter.toLowerCase()))
+    .forEach(x=>{
+      const item=document.createElement("div");
+      item.className="log-item";
+      item.textContent=x;
+      logDiv.appendChild(item);
+    });
+
+  document.querySelector("#pendientes").textContent=pendientes;
+  document.querySelector("#audits").textContent=audits;
+  document.querySelector("#reportes").textContent=reportes;
+}
+
+function filtrar(){
+  render(document.querySelector("#filtro").value);
+}
+
+/* ===== MODAL ===== */
+function openModal(type){
+  const modal=document.querySelector("#modal");
+  const title=document.querySelector("#mTitle");
+  const sub=document.querySelector("#mSub");
+  const body=document.querySelector("#mBody");
+  const action=document.querySelector("#mAction");
+
+  if(type==="inspeccion"){
+    title.textContent="Solicitar inspección regulatoria";
+    sub.textContent="Programar una visita oficial a procesos, centros médicos o atención al cliente.";
+    body.innerHTML=`
+      <label>Fecha programada</label>
+      <input id="fIns" type="date">
+
+      <label>Tipo de inspección</label>
+      <select id="tIns">
+        <option>Cumplimiento normativo</option>
+        <option>Inspección de centros médicos</option>
+        <option>Auditoría de atención al cliente</option>
+        <option>Inspección de seguridad y riesgos</option>
+        <option>Revisión documental regulatoria</option>
+        <option>Supervisión de pólizas y contratos</option>
+      </select>
+
+      <label>Notas adicionales</label>
+      <textarea id="nIns" rows="3"></textarea>
+    `;
+    action.onclick=procesarInspeccion;
+  }
+
+  else if(type==="auditoria"){
+    title.textContent="Emitir orden de auditoría";
+    sub.textContent="Registrar una auditoría oficial sobre operaciones, contratos o siniestros.";
+    body.innerHTML=`
+      <label>Tipo de auditoría</label>
+      <select id="aAud">
+        <option>Auditoría financiera</option>
+        <option>Auditoría operativa</option>
+        <option>Auditoría de siniestros</option>
+        <option>Auditoría de proveedores médicos</option>
+        <option>Auditoría de contratos corporativos</option>
+      </select>
+
+      <label>Fecha límite</label>
+      <input id="fAud" type="date">
+
+      <label>Observaciones</label>
+      <textarea id="nAud" rows="3"></textarea>
+    `;
+    action.onclick=procesarAuditoria;
+  }
+
+  else{ // trazabilidad
+    title.textContent="Generar reporte de trazabilidad";
+    sub.textContent="Consultar el seguimiento de casos, pólizas, proveedores o reclamaciones.";
+    body.innerHTML=`
+      <label>ID de referencia (caso, póliza, siniestro...)</label>
+      <input id="lId">
+
+      <label>Área o categoría</label>
+      <select id="cat">
+        <option>Auditoría de siniestros</option>
+        <option>Auditoría de pólizas</option>
+        <option>Proveedores médicos</option>
+        <option>Centros médicos afiliados</option>
+        <option>Contratos corporativos</option>
+        <option>Casos de atención al cliente</option>
+        <option>Reclamaciones</option>
+      </select>
+    `;
+    action.onclick=procesarReporte;
+  }
+
+  modal.style.display="flex";
+}
+
+function closeModal(){
+  document.querySelector("#modal").style.display="none";
+}
+
+/* ===== LÓGICA DE ACCIONES ===== */
+function procesarInspeccion(){
+  const fecha=document.querySelector("#fIns").value;
+  if(!fecha){alert("Selecciona la fecha programada.");return;}
+
+  pendientes++;
+  addLog(`Inspección programada · ${fecha}`);
+  document.querySelector("#insFecha").textContent=fecha;
+  document.querySelector("#insRes").textContent="Programada";
+
+  closeModal();
+}
+
+function procesarAuditoria(){
+  const area=document.querySelector("#aAud").value;
+  const fecha=document.querySelector("#fAud").value;
+  if(!fecha){alert("Selecciona la fecha límite.");return;}
+
+  audits++;
+  addLog(`Auditoría emitida · ${area} — Límite: ${fecha}`);
+
+  closeModal();
+}
+
+function procesarReporte(){
+  const lote=document.querySelector("#lId").value || "No especificado";
+  const cat=document.querySelector("#cat").value;
+
+  reportes++;
+  addLog(`Reporte de trazabilidad generado · ${lote} — ${cat}`);
+
+  document.querySelector("#lote").textContent=lote;
+  document.querySelector("#proveedor").textContent=cat;
+
+  closeModal();
+}
+
+/* Inicial */
+addLog("Portal Gobierno listo");
+render();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Solicitud de Información de Medios | Seguros Rimac</title>
+<style>
+  :root{
+    --accent:#d32f2f;
+    --accent-dark:#b71c1c;
+    --bg:#f5f7fa;
+    --text:#333;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);}
+  header{background:var(--accent);color:#fff;text-align:center;padding:16px;font-weight:700;box-shadow:0 2px 6px rgba(0,0,0,0.12);}
+  .logo{font-size:1.4rem;letter-spacing:1px;}
+  main{max-width:800px;margin:30px auto;background:#fff;border-radius:10px;padding:24px;box-shadow:0 6px 18px rgba(0,0,0,0.06);}
+  h2{color:var(--accent);margin-bottom:10px;}
+  label{display:block;margin-top:10px;font-weight:600;}
+  input,select,textarea{width:100%;padding:8px;margin-top:6px;border:1px solid #ccc;border-radius:6px;font-size:0.95rem;}
+  .pantalla{display:none;}
+  .visible{display:block;animation:fadeIn .3s ease;}
+  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+  .controls{margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;}
+  .btn{padding:10px 14px;background:var(--accent);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600;}
+  .btn.secondary{background:#f0f0f0;color:#222;}
+  .btn:hover{background:var(--accent-dark);}
+  footer{text-align:center;color:#777;margin-top:20px;font-size:0.9rem;}
+  pre{background:#fafafa;padding:12px;border-radius:8px;border:1px solid #eee;white-space:pre-wrap;}
+</style>
+</head>
+<body>
+<header><span class="logo">RIMAC</span> | Solicitud de Información de Medios</header>
+<main>
+  <!-- PANTALLA 1: INICIO -->
+  <section id="p1" class="pantalla visible">
+    <h2>Bienvenido</h2>
+    <p>Este portal permite a periodistas y medios de comunicación solicitar información oficial de <strong>Seguros Rimac</strong> de forma clara y eficiente.</p>
+    <div class="controls">
+      <button class="btn" onclick="mostrar(2)">Iniciar solicitud</button>
+    </div>
+  </section>
+
+  <!-- PANTALLA 2: DATOS DEL MEDIO -->
+  <section id="p2" class="pantalla">
+    <h2>Paso 1: Datos del solicitante</h2>
+    <label>Nombre del periodista</label>
+    <input id="nombre" placeholder="Ej. Ana Torres">
+    <label>Medio de comunicación</label>
+    <input id="medio" placeholder="Ej. Diario Gestión">
+    <label>Correo electrónico</label>
+    <input id="correo" type="email" placeholder="Ej. ana.torres@gestion.pe">
+    <label>Teléfono</label>
+    <input id="telefono" type="text" placeholder="Ej. 999888777">
+    <label>Urgencia</label>
+    <select id="urgencia">
+      <option value="">Seleccionar</option>
+      <option>Baja (72h)</option>
+      <option>Media (48h)</option>
+      <option>Alta (24h)</option>
+    </select>
+    <div class="controls">
+      <button class="btn" onclick="validarPaso1()">Siguiente</button>
+      <button class="btn secondary" onclick="mostrar(1)">Volver</button>
+    </div>
+  </section>
+
+  <!-- PANTALLA 3: TIPO DE SOLICITUD -->
+  <section id="p3" class="pantalla">
+    <h2>Paso 2: Tipo de solicitud</h2>
+    <label>Selecciona el tipo de información requerida</label>
+    <select id="tipo">
+      <option value="">Seleccionar</option>
+      <option>Información general</option>
+      <option>Estadísticas o datos corporativos</option>
+      <option>Vocería especializada</option>
+      <option>Comunicado oficial</option>
+      <option>Otros</option>
+    </select>
+    <div class="controls">
+      <button class="btn" onclick="validarPaso2()">Siguiente</button>
+      <button class="btn secondary" onclick="mostrar(2)">Volver</button>
+    </div>
+  </section>
+
+  <!-- PANTALLA 4: DETALLES -->
+  <section id="p4" class="pantalla">
+    <h2>Paso 3: Detalles de la solicitud</h2>
+    <label>Describe brevemente la información que necesitas</label>
+    <textarea id="detalle" rows="4" placeholder="Ej. Solicito cifras actualizadas sobre seguros de salud corporativos..." ></textarea>
+    <label>Fecha límite para recibir respuesta</label>
+    <input id="fecha" type="date">
+    <div class="controls">
+      <button class="btn" onclick="validarPaso3()">Siguiente</button>
+      <button class="btn secondary" onclick="mostrar(3)">Volver</button>
+    </div>
+  </section>
+
+  <!-- PANTALLA 5: CONFIRMACIÓN -->
+  <section id="p5" class="pantalla">
+    <h2>Confirmar solicitud</h2>
+    <p>Por favor revisa los datos antes de enviar:</p>
+    <pre id="resumen"></pre>
+    <div class="controls">
+      <button class="btn" onclick="enviarSolicitud()">Enviar</button>
+      <button class="btn secondary" onclick="mostrar(4)">Volver</button>
+    </div>
+  </section>
+
+  <!-- PANTALLA 6: FINAL -->
+  <section id="p6" class="pantalla">
+    <h2>✅ Solicitud enviada</h2>
+    <p>Gracias por contactarte con <strong>Seguros Rimac</strong>. Tu número de solicitud es:</p>
+    <pre id="codigo"></pre>
+    <p>Te enviaremos una confirmación al correo registrado.</p>
+    <div class="controls">
+      <button class="btn" onclick="nuevaSolicitud()">Nueva solicitud</button>
+    </div>
+  </section>
+</main>
+<footer>© 2025 Seguros Rimac - Portal de atención a medios</footer>
+
+<script>
+let datos = {};
+
+function mostrar(n){
+  document.querySelectorAll('.pantalla').forEach(p=>p.classList.remove('visible'));
+  document.getElementById('p'+n).classList.add('visible');
+  window.scrollTo(0,0);
+}
+
+function validarPaso1(){
+  const nombre=document.getElementById('nombre').value.trim();
+  const medio=document.getElementById('medio').value.trim();
+  const correo=document.getElementById('correo').value.trim();
+  const tel=document.getElementById('telefono').value.trim();
+  const urg=document.getElementById('urgencia').value;
+  if(!nombre||!medio||!correo||!tel||!urg){alert('Completa todos los campos.');return;}
+  datos={nombre,medio,correo,tel,urg};
+  mostrar(3);
+}
+
+function validarPaso2(){
+  const tipo=document.getElementById('tipo').value;
+  if(!tipo){alert('Selecciona un tipo de solicitud.');return;}
+  datos.tipo=tipo;
+  mostrar(4);
+}
+
+function validarPaso3(){
+  const detalle=document.getElementById('detalle').value.trim();
+  const fecha=document.getElementById('fecha').value;
+  if(!detalle||!fecha){alert('Completa todos los campos.');return;}
+  datos.detalle=detalle;
+  datos.fecha=fecha;
+  // generar resumen
+  const resumen=`Nombre: ${datos.nombre}\nMedio: ${datos.medio}\nCorreo: ${datos.correo}\nTeléfono: ${datos.tel}\nUrgencia: ${datos.urg}\nTipo: ${datos.tipo}\nDetalle: ${datos.detalle}\nFecha límite: ${datos.fecha}`;
+  document.getElementById('resumen').textContent=resumen;
+  mostrar(5);
+}
+
+function enviarSolicitud(){
+  const codigo='SOL-'+Math.floor(10000+Math.random()*90000);
+  document.getElementById('codigo').textContent=codigo;
+  datos.codigo=codigo;
+  console.log('Solicitud enviada:',datos);
+  mostrar(6);
+}
+
+function nuevaSolicitud(){
+  datos={};
+  document.querySelectorAll('input, textarea, select').forEach(e=>e.value='');
+  mostrar(1);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Seguro Rimac - Salud</title>
+<style>
+  :root{
+    --accent:#d32f2f;
+    --accent-dark:#b71c1c;
+    --card-border:#e0e0e0;
+    --bg:#f5f7fa;
+    --text:#333;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: "Segoe UI", Roboto, Arial, sans-serif;
+    background:var(--bg);
+    color:var(--text);
+  }
+  header{
+    background:var(--accent);
+    color:#fff;
+    text-align:center;
+    padding:16px 12px;
+    font-weight:700;
+    box-shadow:0 2px 6px rgba(0,0,0,0.12);
+  }
+
+  main{
+    max-width:1100px; /* permite 4 columnas en pantallas anchas */
+    margin:28px auto;
+    background:#fff;
+    border-radius:10px;
+    padding:24px;
+    box-shadow:0 6px 18px rgba(0,0,0,0.06);
+  }
+
+  h2{
+    color:var(--accent);
+    border-left:5px solid var(--accent);
+    padding-left:10px;
+    margin:0 0 14px 0;
+  }
+
+  /* ---------- Planes: grid de 4 columnas en desktop ---------- */
+  .plan-container{
+    display:grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap:16px;
+    margin-bottom:18px;
+  }
+  .plan{
+    border:2px solid var(--card-border);
+    border-radius:10px;
+    padding:14px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    min-height:230px; /* altura uniforme */
+    background:#fff;
+    transition:transform .16s, box-shadow .16s, border-color .16s;
+  }
+  .plan:hover{
+    transform:translateY(-4px);
+    box-shadow:0 8px 24px rgba(0,0,0,0.06);
+    border-color:var(--accent);
+  }
+  .plan h3{ margin:0; color:var(--accent); font-size:1.05rem;}
+  .plan .precio{ font-weight:700; font-size:1.05rem; color:var(--text); }
+  .plan .beneficios{ font-size:0.92rem; line-height:1.35; color:#444; flex:1; }
+
+  /* destacado (recomendado) */
+  .plan.recomendado{
+    border-color:var(--accent);
+    box-shadow:0 6px 18px rgba(211,47,47,0.12);
+  }
+  .plan.recomendado::before{
+    content:"⭐ Recomendado";
+    display:inline-block;
+    background:var(--accent);
+    color:#fff;
+    padding:4px 8px;
+    border-radius:6px;
+    font-size:0.78rem;
+    align-self:flex-end;
+  }
+
+  /* botones */
+  .plan button{ 
+    width:100%;
+    padding:10px 12px;
+    background:var(--accent);
+    color:#fff;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:600;
+  }
+  .plan button:hover{ background:var(--accent-dark); }
+
+  /* Formularios y pantallas */
+  .pantalla{ display:none; }
+  .visible{ display:block; animation:fadeIn .28s ease; }
+  @keyframes fadeIn{ from{opacity:0} to{opacity:1} }
+
+  label{ display:block; margin-top:10px; font-weight:600; font-size:0.95rem; }
+  input, select, textarea{
+    width:100%;
+    padding:8px 10px;
+    margin-top:6px;
+    border:1px solid #ccc;
+    border-radius:8px;
+    font-size:0.95rem;
+  }
+
+  /* Botones generales (no de plan) */
+  .controls { margin-top:14px; display:flex; gap:10px; flex-wrap:wrap; }
+  .controls .btn{ 
+    padding:10px 14px;
+    background:var(--accent);
+    color:#fff;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    min-width:140px;
+    font-weight:600;
+  }
+  .controls .btn.secondary{
+    background:#f0f0f0; color:#222;
+  }
+
+  footer{ text-align:center; color:#777; margin-top:20px; font-size:0.9rem; }
+
+  /* responsive: <= 1000 -> 2 columnas, <=600 -> 1 columna */
+  @media (max-width:1000px){
+    .plan-container{ grid-template-columns: repeat(2, 1fr); }
+    main{ padding:18px; margin:18px; }
+  }
+  @media (max-width:600px){
+    .plan-container{ grid-template-columns: 1fr; gap:12px; }
+    .controls{ flex-direction:column; }
+  }
+  
+  /* pagoExtra area style */
+  #pagoExtra{ margin-top:12px; }
+  pre#historialPagos{ white-space:pre-wrap; background:#fafafa; padding:12px; border-radius:8px; border:1px solid #eee; }
+</style>
+</head>
+<body>
+<header>Seguro Rimac - Salud</header>
+
+<main>
+  <!-- PANTALLA 1: PLANES -->
+  <section id="pantalla1" class="pantalla visible">
+    <h2>Paso 1: Elegir Plan</h2>
+    <div class="plan-container">
+      <article class="plan" data-plan="Básico" data-precio="282.15">
+        <h3>Cobertura Básica</h3>
+        <div class="precio">S/282.15 al mes</div>
+        <div class="beneficios">
+          Atención en Clínica Internacional, Clínica Javier Prado, entre otras.<br>
+          Emergencias accidentales gratis.<br>
+          Consultas médicas en clínicas desde S/55*.<br>
+          Cobertura hasta 75%* en medicinas y exámenes.<br>
+          Cirugías y hospitalización cubiertos hasta 80%*.<br>
+          Chequeo preventivo gratis.<br>
+          Cubre gastos hasta S/3,200,000 al año.
+        </div>
+        <button class="select-plan">Seleccionar Básico</button>
+      </article>
+
+      <article class="plan recomendado" data-plan="Regular" data-precio="279.30">
+        <h3>Cobertura Regular</h3>
+        <div class="precio">S/279.30 al mes</div>
+        <div class="beneficios">
+          Atención en Clínica Internacional, Clínica Delgado, entre otras.<br>
+          Emergencias accidentales gratis.<br>
+          Consultas médicas en clínicas desde S/45*.<br>
+          Cobertura hasta 90%* en medicinas y exámenes.<br>
+          Cirugías y hospitalización cubiertos hasta 95%*.<br>
+          Chequeo preventivo gratis.<br>
+          Cubre gastos hasta S/5,000,000 al año.
+        </div>
+        <button class="select-plan">Seleccionar Regular</button>
+      </article>
+
+      <article class="plan" data-plan="Completa" data-precio="408.98">
+        <h3>Cobertura Completa</h3>
+        <div class="precio">S/408.98 al mes</div>
+        <div class="beneficios">
+          Atención en Clínica Internacional, Clínica Delgado, entre otras.<br>
+          Si te atiendes fuera de la red te reembolsamos hasta 75%.<br>
+          Consultas médicas en clínicas desde S/40*.<br>
+          Cobertura hasta 90%* en medicinas y exámenes.<br>
+          Cirugías y hospitalización cubiertos hasta 95%*.<br>
+          Chequeo preventivo gratis.<br>
+          Cubre gastos hasta S/9,600,000 al año.
+        </div>
+        <button class="select-plan">Seleccionar Completa</button>
+      </article>
+
+      <article class="plan" data-plan="Internacional" data-precio="763.53">
+        <h3>Cobertura Completa Internacional</h3>
+        <div class="precio">S/763.53 al mes</div>
+        <div class="beneficios">
+          Clínicas nacionales e internacionales.<br>
+          Si te atiendes fuera de la red te reembolsamos hasta 75%.<br>
+          Tus atenciones en el extranjero están cubiertas hasta 80%.<br>
+          Todas las coberturas del plan Completa.<br>
+          Cubre gastos hasta $4,000,000 al año.
+        </div>
+        <button class="select-plan">Seleccionar Internacional</button>
+      </article>
+    </div>
+  </section>
+
+  <!-- PANTALLA 2: DATOS -->
+  <section id="pantalla2" class="pantalla">
+    <h2>Paso 2: Ingresar Datos</h2>
+    <label for="nombre">Nombre completo</label>
+    <input id="nombre" type="text" placeholder="Tu nombre completo">
+
+    <label for="tipoDoc">Tipo de documento</label>
+    <select id="tipoDoc">
+      <option value="">Seleccionar</option>
+      <option value="DNI">DNI</option>
+      <option value="CE">Carné de extranjería</option>
+    </select>
+
+    <label for="nroDoc">Número de documento</label>
+    <input id="nroDoc" type="text" placeholder="Ej. 12345678">
+
+    <label for="celular">Celular</label>
+    <input id="celular" type="text" placeholder="Ej. 9xxxxxxxx">
+
+    <label for="fechaNac">Fecha de nacimiento</label>
+    <input id="fechaNac" type="date">
+
+    <div class="controls">
+      <button class="btn" id="btnDatosSiguiente">Siguiente</button>
+      <button class="btn secondary" onclick="mostrar(1)">Volver</button>
+    </div>
+  </section>
+
+  <!-- PANTALLA 3: DECLARACIÓN SALUD -->
+  <section id="pantalla3" class="pantalla">
+    <h2>Paso 3: Declaración de Salud</h2>
+    <p>¿Tienes alguna condición preexistente?</p>
+    <label><input type="radio" name="cond" value="Sí"> Sí</label>
+    <label><input type="radio" name="cond" value="No" checked> No</label>
+
+    <div class="controls">
+      <button class="btn" id="btnDeclaraSiguiente">Siguiente</button>
+      <button class="btn secondary" onclick="mostrar(2)">Volver</button>
+    </div>
+  </section>
+
+  <!-- PANTALLA 3B: DETALLE CONDICIONES -->
+  <section id="pantalla3B" class="pantalla">
+    <h2>Detalle de condiciones preexistentes</h2>
+    <label for="condDetalle">Describe tus condiciones</label>
+    <textarea id="condDetalle" rows="4" placeholder="Ej.: hipertensión, alergias, etc."></textarea>
+
+    <div class="controls">
+      <button class="btn" onclick="mostrar(4)">Continuar</button>
+      <button class="btn secondary" onclick="mostrar(3)">Volver</button>
+    </div>
+  </section>
+
+  <!-- PANTALLA 4: DOMICILIO -->
+  <section id="pantalla4" class="pantalla">
+    <h2>Paso 4: Datos de Domicilio</h2>
+    <label for="direccion">Dirección</label>
+    <input id="direccion" type="text">
+    <label for="referencia">Referencia</label>
+    <input id="referencia" type="text">
+
+    <div class="controls">
+      <button class="btn" onclick="mostrar(5)">Siguiente</button>
+      <button class="btn secondary" onclick="mostrar(3)">Volver</button>
+    </div>
+  </section>
+
+  <!-- PANTALLA 5: PAGO (formulario dinámico según método) -->
+  <section id="pantalla5" class="pantalla">
+    <h2>Paso 5: Pago</h2>
+    <p>Selecciona tu método de pago</p>
+
+    <label><input type="radio" name="pago" value="Tarjeta"> Tarjeta de crédito</label>
+    <label><input type="radio" name="pago" value="Billetera"> Billetera digital</label>
+    <label><input type="radio" name="pago" value="Transferencia"> Transferencia bancaria</label>
+
+    <div id="pagoExtra" aria-live="polite"></div>
+
+    <div class="controls">
+      <button class="btn" id="btnProcesarPago">Procesar pago</button>
+      <button class="btn secondary" onclick="mostrar(4)">Volver</button>
+    </div>
+  </section>
+
+  <!-- PANTALLA 6: CONFIRMACIÓN -->
+  <section id="pantalla6" class="pantalla">
+    <h2>✅ Pago confirmado</h2>
+    <p>Tu pago fue procesado correctamente.</p>
+    <div class="controls">
+      <button class="btn" id="btnDescargar">Descargar SOAT</button>
+      <button class="btn secondary" onclick="mostrar(7)">Ir a App Rimac</button>
+    </div>
+  </section>
+
+  <!-- PANTALLA 7: APP RIMAC -->
+  <section id="pantalla7" class="pantalla">
+    <h2>App Rimac</h2>
+    <div class="controls" style="flex-direction:column; gap:10px;">
+      <button class="btn" onclick="mostrar('appGestion')">Gestionar seguros</button>
+      <button class="btn" onclick="mostrar('appAsistencia')">Solicitar asistencia</button>
+      <button class="btn" onclick="mostrar('appPagos')">Consultar pagos</button>
+      <button class="btn secondary" onclick="location.reload()">Salir</button>
+    </div>
+  </section>
+
+  <!-- APP: GESTIÓN -->
+  <section id="appGestion" class="pantalla">
+    <h2>Mis seguros</h2>
+    <p id="detallePlan" style="font-weight:700;"></p>
+    <div class="controls" style="flex-direction:column;">
+      <button class="btn" onclick="alert('Un asesor se pondrá en contacto contigo para renovar la cobertura.')">Renovar cobertura</button>
+      <button class="btn" onclick="alert('Un asesor se pondrá en contacto contigo para anular tu contrato.')">Anular contrato</button>
+      <button class="btn secondary" onclick="mostrar(7)">Volver</button>
+    </div>
+  </section>
+
+  <!-- APP: ASISTENCIA -->
+  <section id="appAsistencia" class="pantalla">
+    <h2>Solicitar asistencia</h2>
+    <p>Un asesor se pondrá en contacto contigo en breve para brindarte asistencia.</p>
+    <div class="controls">
+      <button class="btn" onclick="mostrar(7)">Volver</button>
+    </div>
+  </section>
+
+  <!-- APP: PAGOS -->
+  <section id="appPagos" class="pantalla">
+    <h2>Historial de pagos</h2>
+    <pre id="historialPagos">Sin pagos registrados.</pre>
+    <div class="controls">
+      <button class="btn" onclick="mostrar(7)">Volver</button>
+    </div>
+  </section>
+
+</main>
+
+<footer>© 2025 Rimac Seguros - Simulación</footer>
+
+<script>
+/* Estado */
+const cliente = { };
+const pagos = [];
+
+/* Util: mostrar pantalla (acepta número o id-string) */
+function mostrar(paso){
+  document.querySelectorAll('.pantalla').forEach(p=>p.classList.remove('visible'));
+  const id = typeof paso === 'number' ? 'pantalla' + paso : paso;
+  const el = document.getElementById(id);
+  if(el) el.classList.add('visible');
+  window.scrollTo(0,0);
+}
+
+/* Selección de plan (botones en tarjetas) */
+document.querySelectorAll('.select-plan').forEach(btn=>{
+  btn.addEventListener('click', e=>{
+    const card = e.currentTarget.closest('.plan');
+    cliente.plan = card.dataset.plan;
+    cliente.precio = parseFloat(card.dataset.precio);
+    mostrar(2);
+  });
+});
+
+/* Paso 2 -> validar datos */
+document.getElementById('btnDatosSiguiente').addEventListener('click', ()=>{
+  const nombre = document.getElementById('nombre').value.trim();
+  if(!nombre) return alert('Ingresa tu nombre completo.');
+  cliente.nombre = nombre;
+  cliente.tipoDoc = document.getElementById('tipoDoc').value;
+  cliente.nroDoc = document.getElementById('nroDoc').value.trim();
+  cliente.celular = document.getElementById('celular').value.trim();
+  cliente.fechaNac = document.getElementById('fechaNac').value;
+  if(!cliente.tipoDoc) return alert('Selecciona tipo de documento.');
+  if(!/^\d{6,12}$/.test(cliente.nroDoc)) return alert('Número de documento inválido.');
+  if(!/^[9]\d{8}$/.test(cliente.celular)) return alert('Número de celular inválido (ej. 9xxxxxxxx).');
+  if(!cliente.fechaNac) return alert('Selecciona fecha de nacimiento.');
+  mostrar(3);
+});
+
+/* Paso 3 -> decidir 3B o 4 */
+document.getElementById('btnDeclaraSiguiente').addEventListener('click', ()=>{
+  const cond = document.querySelector('input[name="cond"]:checked').value;
+  cliente.condicion = cond;
+  if(cond === 'Sí') mostrar('pantalla3B'); else mostrar(4);
+});
+
+/* Pago: cuando cambian radios, mostramos formulario extra */
+const pagoRadios = document.querySelectorAll('input[name="pago"]');
+const pagoExtra = document.getElementById('pagoExtra');
+
+pagoRadios.forEach(r=>{
+  r.addEventListener('change', onPagoChange);
+});
+function onPagoChange(){
+  const sel = document.querySelector('input[name="pago"]:checked');
+  pagoExtra.innerHTML = '';
+  if(!sel) return;
+  if(sel.value === 'Tarjeta'){
+    pagoExtra.innerHTML = `
+      <label for="tarjeta">Número de tarjeta</label>
+      <input id="tarjeta" placeholder="#### #### #### ####" maxlength="19" inputmode="numeric">
+
+      <label for="venc">Fecha vencimiento</label>
+      <input id="venc" type="month">
+
+      <label for="cvv">CVV</label>
+      <input id="cvv" maxlength="4" placeholder="123" inputmode="numeric">
+    `;
+  } else if(sel.value === 'Billetera'){
+    pagoExtra.innerHTML = `
+      <label for="billetera">Billetera</label>
+      <select id="billetera">
+        <option value="Yape">Yape</option>
+        <option value="Plin">Plin</option>
+        <option value="Tunki">Tunki</option>
+      </select>
+      <p style="margin-top:8px;font-size:0.95rem">Se simula la generación de un QR para escanear y confirmar el pago.</p>
+    `;
+  } else if(sel.value === 'Transferencia'){
+    pagoExtra.innerHTML = `
+      <p>Número de cuenta: <strong>123-456789-RIMAC</strong></p>
+      <label for="codOp">Código de operación (del banco)</label>
+      <input id="codOp" placeholder="Ej. OP123456">
+    `;
+  }
+}
+
+/* Procesar pago: validar según método, registrar pago y avanzar (pantalla6) */
+document.getElementById('btnProcesarPago').addEventListener('click', ()=>{
+  const sel = document.querySelector('input[name="pago"]:checked');
+  if(!sel) return alert('Selecciona un método de pago.');
+
+  const metodo = sel.value;
+  // Validaciones por método
+  if(metodo === 'Tarjeta'){
+    const tar = document.getElementById('tarjeta')?.value.replace(/\s+/g,'') || '';
+    const venc = document.getElementById('venc')?.value || '';
+    const cvv = document.getElementById('cvv')?.value || '';
+    if(!/^\d{13,19}$/.test(tar)) return alert('Número de tarjeta inválido.');
+    if(!venc) return alert('Selecciona fecha de vencimiento.');
+    if(!/^\d{3,4}$/.test(cvv)) return alert('CVV inválido.');
+    // simulación éxito
+  } else if(metodo === 'Billetera'){
+    const billetera = document.getElementById('billetera')?.value;
+    if(!billetera) return alert('Selecciona una billetera digital.');
+    // simulación: se podría simular confirmación QR aquí
+  } else if(metodo === 'Transferencia'){
+    const cod = document.getElementById('codOp')?.value.trim();
+    if(!cod || cod.length < 4) return alert('Ingresa un código de operación válido.');
+  }
+
+  // registrar pago
+  const pago = {
+    metodo,
+    monto: cliente.precio || 0,
+    fecha: new Date().toLocaleString(),
+    codigo: 'TX-' + Math.floor(Math.random()*900000 + 100000)
+  };
+  pagos.push(pago);
+
+  // actualizar historial y detalle para app
+  document.getElementById('detallePlan').innerText = cliente.plan ? `${cliente.plan} — S/${cliente.precio}` : 'No tienes plan seleccionado';
+  document.getElementById('historialPagos').textContent = pagos.map(p=> `${p.fecha} — S/${p.monto} — ${p.metodo} — ${p.codigo}`).join('\n') || 'Sin pagos registrados.';
+
+  mostrar(6);
+});
+
+/* Descargar boleta (txt) */
+document.getElementById('btnDescargar').addEventListener('click', ()=>{
+  const last = pagos[pagos.length - 1];
+  const contenido = [
+    '--- BOLETA / COMPROBANTE DE PAGO RIMAC (SIMULADO) ---',
+    `Cliente: ${cliente.nombre || 'N/D'}`,
+    `Plan: ${cliente.plan || 'N/D'}`,
+    `Monto: S/${last ? last.monto : '0.00'}`,
+    `Fecha: ${last ? last.fecha : new Date().toLocaleString()}`,
+    `Método: ${last ? last.metodo : 'N/D'}`,
+    `Código transacción: ${last ? last.codigo : 'N/D'}`,
+    '-----------------------------------------------'
+  ].join('\n');
+
+  const blob = new Blob([contenido], {type:'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `boleta_${(cliente.nombre || 'cliente').replace(/\s+/g,'_')}.txt`;
+  a.click();
+
+  // después de descargar, llevar a App
+  mostrar(7);
+});
+</script>
+</body>
+</html>

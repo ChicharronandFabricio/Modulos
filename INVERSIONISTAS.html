@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Consulta de Inversiones | Seguros Rimac</title>
+<style>
+  :root{
+    --accent:#d32f2f;
+    --accent-dark:#b71c1c;
+    --bg:#f5f7fa;
+    --text:#333;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);}
+  header{background:var(--accent);color:#fff;text-align:center;padding:16px;font-weight:700;box-shadow:0 2px 6px rgba(0,0,0,0.12);}
+  .logo{font-size:1.4rem;letter-spacing:1px;}
+  main{max-width:800px;margin:30px auto;background:#fff;border-radius:10px;padding:24px;box-shadow:0 6px 18px rgba(0,0,0,0.06);}
+  h2{color:var(--accent);margin-bottom:10px;}
+  label{display:block;margin-top:10px;font-weight:600;}
+  input,select,textarea{width:100%;padding:8px;margin-top:6px;border:1px solid #ccc;border-radius:6px;font-size:0.95rem;}
+  .pantalla{display:none;}
+  .visible{display:block;animation:fadeIn .3s ease;}
+  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+  .controls{margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;}
+  .btn{padding:10px 14px;background:var(--accent);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600;}
+  .btn.secondary{background:#f0f0f0;color:#222;}
+  .btn:hover{background:var(--accent-dark);}
+  footer{text-align:center;color:#777;margin-top:20px;font-size:0.9rem;}
+  pre{background:#fafafa;padding:12px;border-radius:8px;border:1px solid #eee;white-space:pre-wrap;}
+</style>
+</head>
+<body>
+<header><span class="logo">RIMAC</span> | Consulta de Inversiones</header>
+<main>
+  <!-- PANTALLA 1: INICIO -->
+  <section id="p1" class="pantalla visible">
+    <h2>Bienvenido</h2>
+    <p>En este portal podrás consultar el <strong>rendimiento de tus inversiones</strong> con Seguros Rimac, recibir un reporte y registrar reclamos o solicitudes adicionales.</p>
+    <div class="controls">
+      <button class="btn" onclick="mostrar(2)">Iniciar consulta</button>
+    </div>
+  </section>
+
+  <!-- PANTALLA 2: DATOS DEL INVERSOR -->
+  <section id="p2" class="pantalla">
+    <h2>Paso 1: Datos del Inversor</h2>
+    <label>Nombre completo</label>
+    <input id="nombre" placeholder="Ej. José Pérez">
+    <label>Número de documento</label>
+    <input id="documento" placeholder="Ej. 12345678">
+    <label>Correo electrónico</label>
+    <input id="correo" type="email" placeholder="Ej. jose.perez@gmail.com">
+    <label>Número de cliente</label>
+    <input id="ncliente" placeholder="Ej. 789654">
+    <div class="controls">
+      <button class="btn" onclick="validarPaso1()">Siguiente</button>
+      <button class="btn secondary" onclick="mostrar(1)">Volver</button>
+    </div>
+  </section>
+
+  <!-- PANTALLA 3: TIPO DE INVERSIÓN -->
+  <section id="p3" class="pantalla">
+    <h2>Paso 2: Tipo de Inversión</h2>
+    <label>Selecciona el tipo de inversión</label>
+    <select id="tipo">
+      <option value="">Seleccionar</option>
+      <option>Fondo Conservador</option>
+      <option>Fondo Balanceado</option>
+      <option>Fondo Agresivo</option>
+      <option>Depósito a Plazo</option>
+    </select>
+    <label>Moneda</label>
+    <select id="moneda">
+      <option>Soles (S/)</option>
+      <option>Dólares ($)</option>
+    </select>
+    <div class="controls">
+      <button class="btn" onclick="validarPaso2()">Siguiente</button>
+      <button class="btn secondary" onclick="mostrar(2)">Volver</button>
+    </div>
+  </section>
+
+  <!-- PANTALLA 4: DETALLES DE CONSULTA -->
+  <section id="p4" class="pantalla">
+    <h2>Paso 3: Rango de consulta</h2>
+    <label>Desde</label>
+    <input id="desde" type="date">
+    <label>Hasta</label>
+    <input id="hasta" type="date">
+    <div class="controls">
+      <button class="btn" onclick="validarPaso3()">Consultar</button>
+      <button class="btn secondary" onclick="mostrar(3)">Volver</button>
+    </div>
+  </section>
+
+  <!-- PANTALLA 5: RESULTADO -->
+  <section id="p5" class="pantalla">
+    <h2>Resultados del rendimiento</h2>
+    <p>A continuación se muestra el resumen del rendimiento estimado:</p>
+    <pre id="resultado"></pre>
+    <div class="controls">
+      <button class="btn" onclick="descargarReporte()">Descargar reporte</button>
+      <button class="btn secondary" onclick="mostrar(6)">Registrar reclamo</button>
+    </div>
+  </section>
+
+  <!-- PANTALLA 6: RECLAMO -->
+  <section id="p6" class="pantalla">
+    <h2>Reclamo o Solicitud Adicional</h2>
+    <label>Describe tu reclamo o solicitud</label>
+    <textarea id="reclamo" rows="4" placeholder="Ej. Los rendimientos no coinciden con mi estado de cuenta."></textarea>
+    <div class="controls">
+      <button class="btn" onclick="enviarReclamo()">Enviar</button>
+      <button class="btn secondary" onclick="mostrar(5)">Volver</button>
+    </div>
+  </section>
+
+  <!-- PANTALLA 7: CONFIRMACIÓN FINAL -->
+  <section id="p7" class="pantalla">
+    <h2>✅ Registro exitoso</h2>
+    <p>Tu solicitud fue registrada correctamente. Código de seguimiento:</p>
+    <pre id="codigo"></pre>
+    <div class="controls">
+      <button class="btn" onclick="nuevaConsulta()">Nueva consulta</button>
+    </div>
+  </section>
+</main>
+<footer>© 2025 Seguros Rimac - Consulta de Inversiones</footer>
+<script>
+let datos={};
+function mostrar(n){document.querySelectorAll('.pantalla').forEach(p=>p.classList.remove('visible'));document.getElementById('p'+n).classList.add('visible');window.scrollTo(0,0);}
+function validarPaso1(){const nombre=nombreInput.value.trim();const doc=documento.value.trim();const correo=correoInput.value.trim();const ncliente=nclienteInput.value.trim();if(!nombre||!doc||!correo||!ncliente){alert('Completa todos los campos.');return;}datos={nombre,doc,correo,ncliente};mostrar(3);}
+const nombreInput=document.getElementById('nombre');const documento=document.getElementById('documento');const correoInput=document.getElementById('correo');const nclienteInput=document.getElementById('ncliente');
+function validarPaso2(){const tipo=document.getElementById('tipo').value;const moneda=document.getElementById('moneda').value;if(!tipo){alert('Selecciona un tipo de inversión.');return;}datos.tipo=tipo;datos.moneda=moneda;mostrar(4);}
+function validarPaso3(){const desde=document.getElementById('desde').value;const hasta=document.getElementById('hasta').value;if(!desde||!hasta){alert('Selecciona un rango de fechas.');return;}datos.desde=desde;datos.hasta=hasta;const rendimiento=(Math.random()*10).toFixed(2);const codigo='INV-'+Math.floor(10000+Math.random()*90000);datos.codigo=codigo;const texto=`Cliente: ${datos.nombre}\nDocumento: ${datos.doc}\nTipo de inversión: ${datos.tipo}\nMoneda: ${datos.moneda}\nRango: ${datos.desde} a ${datos.hasta}\nRendimiento estimado: ${rendimiento}%\nCódigo: ${codigo}`;document.getElementById('resultado').textContent=texto;mostrar(5);}
+function descargarReporte(){const blob=new Blob([document.getElementById('resultado').textContent],{type:'text/plain'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='reporte_inversion_'+datos.codigo+'.txt';a.click();}
+function enviarReclamo(){const reclamo=document.getElementById('reclamo').value.trim();if(!reclamo){alert('Describe tu reclamo.');return;}const codigo='REC-'+Math.floor(10000+Math.random()*90000);document.getElementById('codigo').textContent=codigo;mostrar(7);}
+function nuevaConsulta(){document.querySelectorAll('input,textarea,select').forEach(e=>e.value='');datos={};mostrar(1);}
+</script>
+</body>
+</html>
