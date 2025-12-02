@@ -12,7 +12,21 @@
         background: #d60000;
     }
 
-    /* Parte superior con imagen */
+    /* Barra superior con logos */
+    .top-bar {
+        background: white;
+        padding: 10px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 3px solid #d60000;
+    }
+
+    .top-bar img {
+        height: 55px;
+    }
+
+    /* Parte superior con imagen grande */
     .header {
         background: url("https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=60") center/cover;
         padding: 70px 40px;
@@ -60,15 +74,30 @@
         object-fit: contain;
         margin-left: 20px;
     }
+
+    /* Responsivo: logos se acomodan */
+    @media (max-width: 600px) {
+        .top-bar img {
+            height: 40px;
+        }
+    }
 </style>
 
 </head>
 <body>
 
+<!-- Barra superior con logos -->
+<div class="top-bar">
+    <img src="https://raw.githubusercontent.com/chicharronandfabricicio/Modulos/main/rimac_logo.png" alt="Rimac">
+    <img src="https://raw.githubusercontent.com/chicharronandfabricicio/Modulos/main/cientifica_logo.png" alt="Científica">
+</div>
+
+<!-- Encabezado -->
 <div class="header">
     MÓDULOS
 </div>
 
+<!-- Módulos -->
 <div class="container">
 
     <a class="card" href="ATENCION_CLIENTE.html">
